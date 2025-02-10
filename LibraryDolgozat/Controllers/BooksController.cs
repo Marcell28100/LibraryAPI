@@ -60,6 +60,42 @@ namespace LibraryDolgozat.Controllers
         }
 
         //PUT
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Book>> Put(int id, UpdateBookDto updateBookDto)
+        {
+            var existingBook = await _context.Books.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (existingBook != null)
+            {
+                existingBook.Title = updateBookDto.Title;
+                existingBook.Author = updateBookDto.Author;
+                existingBook.PublishedYear = updateBookDto.PublishedYear;
+                existingBook.Genre = updateBookDto.Genre;
+                existingBook.Price = updateBookDto.Price;
+
+                return Ok();
+            }
+
+            return NotFound(new { message = "Nincs ilyen találat." });
+        }
+
+
         //DELETE
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (book == null)
+            {
+                return NotFound(new { message = "Nincs ilyen találat." });
+            }
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
